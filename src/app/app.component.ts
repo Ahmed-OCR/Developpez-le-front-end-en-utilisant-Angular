@@ -10,6 +10,7 @@ import { Olympic } from './core/models/Olympic';
 })
 export class AppComponent implements OnInit {
   constructor(private olympicService: OlympicService) {}
+
   olympics!: Olympic[];
 
   ngOnInit(): void {
