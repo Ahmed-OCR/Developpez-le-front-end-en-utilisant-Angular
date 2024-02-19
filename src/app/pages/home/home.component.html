@@ -1,13 +1,8 @@
-<h2>Olympic games app</h2>
-
 <div class="title">Medals per Country</div>
 <div class="wrapper">
-  <div class="item">Number of JOs<p>10</p></div>
-  <div class="item">Number of countries<p>10</p></div>
+  <div class="item">Number of JOs<p>{{ getNbrJos()}}</p></div>
+  <div class="item">Number of countries<p>{{ (olympics$ | async)?.length }}</p></div>
 </div>
-
-<hr />
-<!--<p>{{ (olympics$ | async)?.length }} data loaded</p>-->
 <ngx-charts-pie-chart
   [results]="single"
   [gradient]="gradient"
@@ -15,6 +10,7 @@
   [labels]="showLabels"
   [doughnut]="isDoughnut"
   [legendPosition]="legendPosition"
+  [tooltipText]="toolTipFormat"
   (select)="onSelect($event)"
 >
 </ngx-charts-pie-chart>
