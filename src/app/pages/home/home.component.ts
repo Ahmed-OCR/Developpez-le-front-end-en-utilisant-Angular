@@ -16,8 +16,6 @@ export var single: { name: string; value: number }[] = [];
 })
 export class HomeComponent implements OnInit {
   single: { name: string; value: number }[] = [];
-  // view: [number, number] = [700, 400];
-  // options
   gradient: boolean = true;
   showLegend: boolean = false;
   showLabels: boolean = true;
@@ -25,6 +23,7 @@ export class HomeComponent implements OnInit {
   legendPosition: LegendPosition = LegendPosition.Below;
 
   public olympics$: Observable<Olympic[]> = of([]);
+  olympics: Olympic[] = [];
 
   constructor(
     private olympicService: OlympicService,
@@ -32,10 +31,12 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.olympicService
-      .getOlympics()
+    this.olympics$ = this.olympicService.getOlympics();
+
+    this.olympics$
       .pipe(
         tap((olympic: Olympic[]): void => {
+          this.olympics = olympic;
           const countriesData: Olympic[] = JSON.parse(JSON.stringify(olympic));
           this.calculateTotalMedalsByCountry(countriesData);
         }),
@@ -48,32 +49,34 @@ export class HomeComponent implements OnInit {
     this.route.navigateByUrl(`details/${data.name}`);
   }
 
-  // onActivate(data: any): void {
-  //   console.log('Activate', JSON.parse(JSON.stringify(data)));
-  // }
-  //
-  // onDeactivate(data: any): void {
-  //   console.log('Deactivate', JSON.parse(JSON.stringify(data)));
-  // }
-
   calculateTotalMedalsByCountry(olympic: Olympic[]): void {
-    olympic.forEach((country: Olympic): void => {
-      const totalMedals: number = country.participations.reduce(
+    olympic.forEach((olympic: Olympic): void => {
+      const totalMedals: number = olympic.participations.reduce(
         (acc: number, participation: Participation) => {
           return acc + participation.medalsCount;
         },
         0,
       );
 
-      const totalathlete: number = country.participations.reduce(
-        (acc: number, participation: Participation) => {
-          return acc + participation.athleteCount;
-        },
-        0,
-      );
-
-      single.push({ name: country.country, value: totalMedals });
+      single.push({ name: olympic.country, value: totalMedals });
       Object.assign(this, { single });
     });
+  }
+
+  getNbrJos(): number {
+    const yearsSet: Set<number> = new Set();
+    // Browse each country
+    this.olympics.forEach((olympic: Olympic) => {
+      // Browse each participation by country
+      olympic.participations.forEach((participation: Participation) => {
+        yearsSet.add(participation.year);
+      });
+    });
+    return yearsSet.size;
+  }
+
+  toolTipFormat(input: any) {
+    //&#129351; => Medal html code
+    return `<p>${input.data.name}</p><p>&#129351;${input.data.value}</p>`;
   }
 }
