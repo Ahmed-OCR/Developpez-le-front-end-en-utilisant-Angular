@@ -1,0 +1,32 @@
+div {
+  padding: 10px;
+  border-radius: 10px;
+  margin: auto;
+  text-align: center;
+
+  &.title {
+    width: 300px;
+    background-color: #277474;
+    color: white;
+    font-size: 30px;
+  }
+}
+
+.wrapper {
+  width: 650px;
+  display: flex;
+  flex-wrap: wrap;
+  gap:50px;
+}
+
+.wrapper > div {
+  flex: 1 1 150px;
+  font-size: 25px;
+  border: 2px solid #277474;
+}
+
+p {
+  margin:0;
+  font-weight: bold;
+}
+
