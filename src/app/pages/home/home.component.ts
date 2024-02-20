@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { OlympicService } from 'src/app/core/services/olympic.service';
 import { Olympic } from '../../core/models/Olympic';
@@ -14,7 +14,7 @@ export var single: { name: string; value: number }[] = [];
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
   single: { name: string; value: number }[] = [];
   gradient: boolean = true;
   showLegend: boolean = false;
@@ -22,7 +22,7 @@ export class HomeComponent implements OnInit {
   isDoughnut: boolean = false;
   legendPosition: LegendPosition = LegendPosition.Below;
 
-  public olympics$: Observable<Olympic[]> = of([]);
+  olympics$: Observable<Olympic[]> = of([]);
   olympics: Olympic[] = [];
 
   constructor(
@@ -31,21 +31,15 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.olympics$ = this.olympicService.getOlympics();
-
-    this.olympics$
-      .pipe(
-        tap((olympic: Olympic[]): void => {
-          this.olympics = olympic;
-          const countriesData: Olympic[] = JSON.parse(JSON.stringify(olympic));
-          this.calculateTotalMedalsByCountry(countriesData);
-        }),
-      )
-      .subscribe();
+    this.olympics$ = this.olympicService.loadInitialData().pipe(
+      tap((olympics: Olympic[]): void => {
+        this.olympics = olympics;
+        this.calculateTotalMedalsByCountry(olympics);
+      }),
+    );
   }
 
   onSelect(data: any): void {
-    console.log(data);
     this.route.navigateByUrl(`details/${data.name}`);
   }
 
@@ -57,7 +51,6 @@ export class HomeComponent implements OnInit {
         },
         0,
       );
-
       single.push({ name: olympic.country, value: totalMedals });
       Object.assign(this, { single });
     });
@@ -75,8 +68,12 @@ export class HomeComponent implements OnInit {
     return yearsSet.size;
   }
 
-  toolTipFormat(input: any) {
+  toolTipFormat(input: any): string {
     //&#129351; => Medal html code
     return `<p>${input.data.name}</p><p>&#129351;${input.data.value}</p>`;
+  }
+
+  ngOnDestroy(): void {
+    single = [];
   }
 }

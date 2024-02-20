@@ -1,2 +1,21 @@
-<p>details works!</p>
-<button><a routerLink="/">Back</a></button>
+<div class="title">{{ country }}</div>
+<div class="wrapper">
+  <div class="item">Number of entries<p>{{ getNbrJos() }}</p></div>
+  <div class="item">Total number of medals<p>{{ getNbrMedals()}}</p></div>
+  <div class="item">Total number of athletes<p>{{ getNbrathletes()}}</p></div>
+</div>
+
+<ngx-charts-line-chart
+  [legend]="legend"
+  [showXAxisLabel]="showXAxisLabel"
+  [showYAxisLabel]="showYAxisLabel"
+  [xAxis]="xAxis"
+  [yAxis]="yAxis"
+  [xAxisLabel]="xAxisLabel"
+  [yAxisLabel]="yAxisLabel"
+  [timeline]="timeline"
+  [results]="multi"
+>
+</ngx-charts-line-chart>
+
+<div><button class="back"><a routerLink="/">Back</a></button></div>
