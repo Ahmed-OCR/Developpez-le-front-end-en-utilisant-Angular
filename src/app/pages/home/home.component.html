@@ -2,7 +2,7 @@
 <div class="wrapper">
   <div class="item">Number of JOs<p>{{ getNbrJos()}}</p></div>
   <div class="item">Number of countries<p>{{ (olympics$ | async)?.length }}</p></div>
-</div>
+
 <ngx-charts-pie-chart
   [results]="single"
   [gradient]="gradient"
@@ -13,6 +13,6 @@
   [tooltipText]="toolTipFormat"
   (select)="onSelect($event)"
 >
-</ngx-charts-pie-chart>
+</ngx-charts-pie-chart></div>
 
 
