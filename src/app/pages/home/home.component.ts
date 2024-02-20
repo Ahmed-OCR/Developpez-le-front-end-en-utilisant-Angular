@@ -31,7 +31,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.olympics$ = this.olympicService.loadInitialData().pipe(
+    this.olympics$ = this.olympicService.getOlympics().pipe(
       tap((olympics: Olympic[]): void => {
         this.olympics = olympics;
         this.calculateTotalMedalsByCountry(olympics);
