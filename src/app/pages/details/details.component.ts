@@ -25,8 +25,8 @@ export class DetailsComponent implements OnInit, OnDestroy {
   yAxis: boolean = true;
   showYAxisLabel: boolean = true;
   showXAxisLabel: boolean = true;
-  xAxisLabel: string = 'Dates';
-  yAxisLabel: string = 'Medailles';
+  xAxisLabel: string = 'Years';
+  yAxisLabel: string = 'Medals';
   timeline: boolean = true;
 
   olympics$: Observable<Olympic[]> = of([]);
