@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, take, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { Olympic } from '../models/Olympic';
 
@@ -22,10 +22,6 @@ export class OlympicService {
     );
   }
 
-  getOlympics(): Observable<Olympic[]> {
-    return this.olympics$.asObservable();
-  }
-
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage: string = 'Une erreur est survenue.';
     if (error.error instanceof ErrorEvent) {
@@ -39,5 +35,25 @@ export class OlympicService {
     // Met à jour les données olympiques avec un tableau vide pour indiquer qu'il y a eu une erreur
     this.olympics$.next([]);
     return throwError(() => errorMessage); // Retourne une erreur observable
+  }
+
+  getOlympics(): Observable<Olympic[]> {
+    return this.olympics$.asObservable();
+  }
+
+  getOlympic(country: string): Olympic {
+    let olympic!: Olympic[];
+    this.olympics$
+      .pipe(
+        take(1),
+        tap(
+          (olympics: Olympic[]) =>
+            (olympic = olympics.filter(
+              (olympic: Olympic): boolean => olympic.country === country,
+            )),
+        ),
+      )
+      .subscribe();
+    return olympic.length > 0 ? olympic[0] : new Olympic();
   }
 }

@@ -1,5 +1,5 @@
-  <div *ngIf="olympic.length !==0; else loadingOrError">
-    <div class="title">{{ country }}</div>
+  <div *ngIf="(olympic && olympic.id > 0); else loadingOrError">
+      <div class="title">{{ country }}</div>
     <div class="wrapper">
       <div class="item">Number of entries<p>{{ getNbrJos() }}</p></div>
       <div class="item">Total number of medals<p>{{ getNbrMedals()}}</p></div>
