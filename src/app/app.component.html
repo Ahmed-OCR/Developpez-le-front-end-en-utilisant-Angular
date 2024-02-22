@@ -1,1 +1,5 @@
-<router-outlet></router-outlet>
+<div *ngIf="olympics?.length; else loadingOrError"></div>
+<ng-template #loadingOrError>
+  <div *ngIf="errorMessage" class="center-screen"><p><span class="title">Erreur lors du chargement des données:</span><br />{{errorMessage}}</p></div>
+</ng-template>
+<router-outlet *ngIf="!errorMessage" ></router-outlet>

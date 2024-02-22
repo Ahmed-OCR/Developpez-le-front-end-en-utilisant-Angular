@@ -1,0 +1,21 @@
+.center-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 100vh;
+
+}
+
+p {
+  background-color: #741608;
+  padding: 15px;
+  border-radius: 5px;
+  color:white;
+  line-height: 40px;
+}
+
+.title
+{
+  font-weight: bold;
+}
