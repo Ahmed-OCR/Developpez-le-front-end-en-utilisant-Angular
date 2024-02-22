@@ -7,8 +7,6 @@ import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { Participation } from '../../core/models/Participation';
 
-export var single: { name: string; value: number }[];
-
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -33,7 +31,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    single = [];
     this.olympics$ = this.olympicService.getOlympics();
     this.sub.add(
       this.olympics$
@@ -59,9 +56,8 @@ export class HomeComponent implements OnInit, OnDestroy {
         },
         0,
       );
-      single.push({ name: olympic.country, value: totalMedals });
+      this.single.push({ name: olympic.country, value: totalMedals });
     });
-    Object.assign(this, { single });
   }
 
   getNbrJos(): number {
