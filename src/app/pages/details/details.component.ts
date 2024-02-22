@@ -9,7 +9,7 @@ import { tap } from 'rxjs/operators';
 export var multi: {
   name: string;
   series: { name: string; value: number }[];
-}[] = [];
+}[];
 
 @Component({
   selector: 'app-details',
@@ -42,6 +42,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    multi = [];
     this.country = this.route.snapshot.params['name'];
 
     this.olympics$ = this.olympicService.getOlympics();
@@ -54,45 +55,41 @@ export class DetailsComponent implements OnInit, OnDestroy {
                 (olympic: Olympic): boolean => olympic.country === this.country,
               )),
           ),
-          tap(() => this.getDatas()),
+          tap(() => this.setChartDatas()),
         )
         .subscribe(),
     );
   }
 
   getNbrMedals(): number {
-    let nbrMedals: number = 0;
-    this.olympic.forEach((olympic: Olympic): void => {
-      nbrMedals = olympic.participations.reduce(
-        (acc: number, participation: Participation) => {
-          return acc + participation.medalsCount;
-        },
-        0,
-      );
-    });
+    let nbrMedals: number;
+    nbrMedals = this.olympic[0].participations.reduce(
+      (acc: number, participation: Participation) => {
+        return acc + participation.medalsCount;
+      },
+      0,
+    );
     return nbrMedals;
   }
 
   getNbrathletes(): number {
-    let nbrAthletes: number = 0;
-    this.olympic.forEach((olympic: Olympic): void => {
-      nbrAthletes = olympic.participations.reduce(
-        (acc: number, participation: Participation) => {
-          return acc + participation.athleteCount;
-        },
-        0,
-      );
-    });
-    return nbrAthletes;
+    let athleteCount: number;
+    athleteCount = this.olympic[0].participations.reduce(
+      (acc: number, participation: Participation) => {
+        return acc + participation.athleteCount;
+      },
+      0,
+    );
+    return athleteCount;
   }
 
   getNbrJos(): number {
     return this.olympic[0]?.participations.length ?? 0;
   }
 
-  getDatas(): void {
-    this.olympic.forEach((olympic: Olympic) => {
-      olympic.participations.forEach((participation: Participation) => {
+  setChartDatas(): void {
+    this.olympic.forEach((olympic: Olympic): void => {
+      olympic.participations.forEach((participation: Participation): void => {
         this.series.push({
           name: participation.year.toString(),
           value: participation.medalsCount,
@@ -105,6 +102,5 @@ export class DetailsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.sub.unsubscribe();
-    multi = [];
   }
 }

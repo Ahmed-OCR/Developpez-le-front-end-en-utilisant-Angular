@@ -1,18 +1,25 @@
-<div class="title">Medals per Country</div>
-<div class="wrapper">
-  <div class="item">Number of JOs<p>{{ getNbrJos()}}</p></div>
-  <div class="item">Number of countries<p>{{ (olympics$ | async)?.length }}</p></div>
+<div *ngIf="olympics?.length; else loadingOrError">
+  <div class="title">Medals per Country</div>
+  <div class="wrapper">
+    <div class="item">Number of JOs<p>{{ getNbrJos()}}</p></div>
+    <div class="item">Number of countries<p>{{ olympics.length }}</p></div>
+    <ngx-charts-pie-chart
+      [results]="single"
+      [gradient]="gradient"
+      [legend]="showLegend"
+      [labels]="showLabels"
+      [doughnut]="isDoughnut"
+      [legendPosition]="legendPosition"
+      [tooltipText]="toolTipFormat"
+      (select)="onSelect($event)">
+    </ngx-charts-pie-chart>
+  </div>
+</div>
 
-<ngx-charts-pie-chart
-  [results]="single"
-  [gradient]="gradient"
-  [legend]="showLegend"
-  [labels]="showLabels"
-  [doughnut]="isDoughnut"
-  [legendPosition]="legendPosition"
-  [tooltipText]="toolTipFormat"
-  (select)="onSelect($event)"
->
-</ngx-charts-pie-chart></div>
+<ng-template #loadingOrError>
+  <div>Erreur lors du chargement des données</div>
+</ng-template>
+
+
 
 
