@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { delay, Observable, of, Subscription } from 'rxjs';
+import { delay, Subscription } from 'rxjs';
 import { OlympicService } from 'src/app/core/services/olympic.service';
 import { Olympic } from '../../core/models/Olympic';
 import { LegendPosition } from '@swimlane/ngx-charts';
@@ -21,7 +21,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   isDoughnut: boolean = false;
   legendPosition: LegendPosition = LegendPosition.Below;
 
-  olympics$: Observable<Olympic[]> = of([]);
   olympics: Olympic[] = [];
 
   sub: Subscription = new Subscription();
@@ -33,9 +32,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.olympics$ = this.olympicService.getOlympics();
     this.sub.add(
-      this.olympics$
+      this.olympicService
+        .getOlympics()
         .pipe(
           tap(() => this.loaderService.showLoader()),
           delay(1500), //Simulation durée chargement des données

@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Olympic } from '../../core/models/Olympic';
 import { Participation } from '../../core/models/Participation';
-import { delay, Observable, of, Subscription } from 'rxjs';
+import { delay, Subscription } from 'rxjs';
 import { OlympicService } from '../../core/services/olympic.service';
 import { tap } from 'rxjs/operators';
 import { DetailSerie } from '../../core/models/DetailSerie';
@@ -26,7 +26,6 @@ export class DetailsComponent implements OnInit, OnDestroy {
   yAxisLabel: string = 'Medals';
   timeline: boolean = true;
 
-  olympics$: Observable<Olympic[]> = of([]);
   olympic!: Olympic;
   country: string = '';
 
@@ -41,9 +40,9 @@ export class DetailsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.country = this.route.snapshot.params['name'];
 
-    this.olympics$ = this.olympicService.getOlympics();
     this.sub.add(
-      this.olympics$
+      this.olympicService
+        .getOlympics()
         .pipe(
           tap(() => this.loaderService.showLoader()),
           delay(1500), //Simulation durée chargement des données

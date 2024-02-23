@@ -17,7 +17,7 @@ export class OlympicService {
 
   loadInitialData(): Observable<Olympic[]> {
     return this.http.get<Olympic[]>(this.olympicUrl).pipe(
-      tap((value: Olympic[]) => this.olympics$.next(value)), // Met à jour les données olympiques en cas de succès
+      tap((olympics: Olympic[]) => this.olympics$.next(olympics)), // Met à jour les données olympiques en cas de succès
       catchError(this.handleError), // Gère les erreurs
     );
   }
