@@ -8,6 +8,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { DetailsComponent } from './pages/details/details.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { LoaderComponent } from './pages/loader/loader.component';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     HomeComponent,
     NotFoundComponent,
     DetailsComponent,
+    LoaderComponent,
   ],
   imports: [
     BrowserModule,

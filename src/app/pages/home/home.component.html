@@ -17,8 +17,10 @@
 </div>
 
 <ng-template #loadingOrError>
-  <div>Erreur lors du chargement des données</div>
+  <div *ngIf="!loaderService.isLoading$">Erreur lors du chargement des données</div>
 </ng-template>
+
+<app-loader *ngIf="loaderService.isLoading$"></app-loader>
 
 
 
