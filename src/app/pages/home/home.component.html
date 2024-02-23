@@ -20,7 +20,7 @@
   <div *ngIf="!loaderService.isLoading$">Erreur lors du chargement des données</div>
 </ng-template>
 
-<app-loader *ngIf="loaderService.isLoading$"></app-loader>
+<app-loader *ngIf="loaderService.isLoading$ | async"></app-loader>
 
 
 
