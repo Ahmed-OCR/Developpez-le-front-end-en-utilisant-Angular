@@ -24,6 +24,8 @@
   <div *ngIf="!loaderService.isLoading$">Page introuvable</div>
 </ng-template>
 
-<div><button class="back"><a routerLink="/">Back</a></button></div>
+<ng-template #backButton>
+  <div><button class="back"><a routerLink="/">Back</a></button></div>
+</ng-template>
 
-<app-loader *ngIf="loaderService.isLoading$"></app-loader>
+<app-loader *ngIf="loaderService.isLoading$ | async; else backButton"></app-loader>
