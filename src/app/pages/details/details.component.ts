@@ -43,8 +43,11 @@ export class DetailsComponent implements OnInit, OnDestroy {
     this.sub.add(
       this.olympics$
         .pipe(
-          tap((): void => {
-            this.olympic = this.olympicService.getOlympic(this.country);
+          tap((olympics: Olympic[]): void => {
+            this.olympic = this.olympicService.getOlympic(
+              olympics,
+              this.country,
+            );
           }),
           tap((): void => {
             if (this.olympic && this.olympic.id > 0) this.setChartDatas();
