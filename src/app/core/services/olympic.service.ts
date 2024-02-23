@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, take, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { Olympic } from '../models/Olympic';
 
@@ -41,19 +41,10 @@ export class OlympicService {
     return this.olympics$.asObservable();
   }
 
-  getOlympic(country: string): Olympic {
-    let olympic!: Olympic[];
-    this.olympics$
-      .pipe(
-        take(1),
-        tap(
-          (olympics: Olympic[]) =>
-            (olympic = olympics.filter(
-              (olympic: Olympic): boolean => olympic.country === country,
-            )),
-        ),
-      )
-      .subscribe();
+  getOlympic(olympics: Olympic[], country: string): Olympic {
+    let olympic: Olympic[] = olympics.filter(
+      (olympic: Olympic): boolean => olympic.country === country,
+    );
     return olympic.length > 0 ? olympic[0] : new Olympic();
   }
 }
