@@ -1,27 +1,29 @@
-  <div *ngIf="(olympic && olympic.id > 0); else loadingOrError">
-      <div class="title">{{ country }}</div>
-    <div class="wrapper">
-      <div class="item">Number of entries<p>{{ getNbrJos() }}</p></div>
-      <div class="item">Total number of medals<p>{{ getNbrMedals()}}</p></div>
-      <div class="item">Total number of athletes<p>{{ getNbrathletes()}}</p></div>
-    </div>
-
-    <ngx-charts-line-chart
-      [legend]="legend"
-      [showXAxisLabel]="showXAxisLabel"
-      [showYAxisLabel]="showYAxisLabel"
-      [xAxis]="xAxis"
-      [yAxis]="yAxis"
-      [xAxisLabel]="xAxisLabel"
-      [yAxisLabel]="yAxisLabel"
-      [timeline]="timeline"
-      [results]="multi"
-    >
-    </ngx-charts-line-chart>
+<div *ngIf="(olympic && olympic.id > 0); else loadingOrError">
+    <div class="title">{{ country }}</div>
+  <div class="wrapper">
+    <div class="item">Number of entries<p>{{ getNbrJos() }}</p></div>
+    <div class="item">Total number of medals<p>{{ getNbrMedals()}}</p></div>
+    <div class="item">Total number of athletes<p>{{ getNbrathletes()}}</p></div>
   </div>
 
+  <ngx-charts-line-chart
+    [legend]="legend"
+    [showXAxisLabel]="showXAxisLabel"
+    [showYAxisLabel]="showYAxisLabel"
+    [xAxis]="xAxis"
+    [yAxis]="yAxis"
+    [xAxisLabel]="xAxisLabel"
+    [yAxisLabel]="yAxisLabel"
+    [timeline]="timeline"
+    [results]="multi"
+  >
+  </ngx-charts-line-chart>
+</div>
+
 <ng-template #loadingOrError>
-  <div>Page introuvable</div>
+  <div *ngIf="!loaderService.isLoading$">Page introuvable</div>
 </ng-template>
 
-  <div><button class="back"><a routerLink="/">Back</a></button></div>
+<div><button class="back"><a routerLink="/">Back</a></button></div>
+
+<app-loader *ngIf="loaderService.isLoading$"></app-loader>

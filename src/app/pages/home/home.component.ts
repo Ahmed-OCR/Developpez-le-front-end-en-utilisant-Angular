@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Observable, of, Subscription } from 'rxjs';
+import { delay, Observable, of, Subscription } from 'rxjs';
 import { OlympicService } from 'src/app/core/services/olympic.service';
 import { Olympic } from '../../core/models/Olympic';
 import { LegendPosition } from '@swimlane/ngx-charts';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { Participation } from '../../core/models/Participation';
+import { LoaderService } from '../../core/services/loader.service';
 
 @Component({
   selector: 'app-home',
@@ -28,6 +29,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(
     private olympicService: OlympicService,
     private route: Router,
+    public loaderService: LoaderService,
   ) {}
 
   ngOnInit(): void {
@@ -35,10 +37,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.sub.add(
       this.olympics$
         .pipe(
+          tap(() => this.loaderService.showLoader()),
+          delay(1500), //Simulation durée chargement des données
           tap((olympics: Olympic[]): void => {
             this.olympics = olympics;
             this.calculateTotalMedalsByCountry(olympics);
           }),
+          tap(() => this.loaderService.hideLoader()),
         )
         .subscribe(),
     );

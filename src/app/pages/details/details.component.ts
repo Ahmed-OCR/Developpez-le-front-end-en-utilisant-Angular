@@ -2,10 +2,11 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Olympic } from '../../core/models/Olympic';
 import { Participation } from '../../core/models/Participation';
-import { Observable, of, Subscription } from 'rxjs';
+import { delay, Observable, of, Subscription } from 'rxjs';
 import { OlympicService } from '../../core/services/olympic.service';
 import { tap } from 'rxjs/operators';
 import { DetailSerie } from '../../core/models/DetailSerie';
+import { LoaderService } from '../../core/services/loader.service';
 
 @Component({
   selector: 'app-details',
@@ -34,6 +35,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
   constructor(
     private olympicService: OlympicService,
     private route: ActivatedRoute,
+    public loaderService: LoaderService,
   ) {}
 
   ngOnInit(): void {
@@ -43,6 +45,8 @@ export class DetailsComponent implements OnInit, OnDestroy {
     this.sub.add(
       this.olympics$
         .pipe(
+          tap(() => this.loaderService.showLoader()),
+          delay(1500), //Simulation durée chargement des données
           tap((olympics: Olympic[]): void => {
             this.olympic = this.olympicService.getOlympic(
               olympics,
@@ -52,6 +56,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
           tap((): void => {
             if (this.olympic && this.olympic.id > 0) this.setChartDatas();
           }),
+          tap(() => this.loaderService.hideLoader()),
         )
         .subscribe(),
     );
