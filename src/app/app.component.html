@@ -1,5 +1,9 @@
-<div *ngIf="olympics?.length; else loadingOrError"></div>
+<ng-container *ngIf="olympics$ | async; else loadingOrError">
+    <router-outlet></router-outlet>
+</ng-container>
+
 <ng-template #loadingOrError>
   <div *ngIf="errorMessage" class="center-screen"><p><span class="title">Erreur lors du chargement des données:</span><br />{{errorMessage}}</p></div>
 </ng-template>
-<router-outlet *ngIf="!errorMessage" ></router-outlet>
+
+<app-loader *ngIf="loaderService.isLoading$"></app-loader>

@@ -17,24 +17,25 @@ export class OlympicService {
 
   loadInitialData(): Observable<Olympic[]> {
     return this.http.get<Olympic[]>(this.olympicUrl).pipe(
-      tap((olympics: Olympic[]) => this.olympics$.next(olympics)), // Met à jour les données olympiques en cas de succès
-      catchError(this.handleError), // Gère les erreurs
+      tap((olympics: Olympic[]): void => {
+        if (olympics && olympics.length) this.olympics$.next(olympics);
+        else this.olympics$.next([]);
+      }),
+      catchError(
+        (error: HttpErrorResponse): Observable<never> =>
+          this.handleError(error),
+      ),
     );
   }
 
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage: string = 'Une erreur est survenue.';
-    if (error.error instanceof ErrorEvent) {
-      // Erreur côté client
-      errorMessage = `Erreur : ${error.error.message}`;
-    } else {
-      // Erreur côté serveur
-      errorMessage = `Code d'erreur : ${error.status}, message : ${error.message}`;
-    }
-    console.error(errorMessage);
-    // Met à jour les données olympiques avec un tableau vide pour indiquer qu'il y a eu une erreur
-    this.olympics$.next([]);
-    return throwError(() => errorMessage); // Retourne une erreur observable
+    if (error.error instanceof ErrorEvent)
+      errorMessage = `Erreur : ${error.error.message}`; // Erreur côté client
+    else
+      errorMessage = `Code d'erreur : ${error.status}, message : ${error.message}`; // Erreur côté serveur
+
+    return throwError(() => errorMessage);
   }
 
   getOlympics(): Observable<Olympic[]> {
