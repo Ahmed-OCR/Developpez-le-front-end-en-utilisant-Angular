@@ -1,4 +1,4 @@
-<div *ngIf="olympics?.length; else loadingOrError">
+<ng-container *ngIf="olympics$ | async; else loadingOrError">
   <div class="title">Medals per Country</div>
   <div class="wrapper">
     <div class="item">Number of JOs<p>{{ getNbrJos()}}</p></div>
@@ -14,14 +14,10 @@
       (select)="onSelect($event)">
     </ngx-charts-pie-chart>
   </div>
-</div>
+</ng-container>
 
 <ng-template #loadingOrError>
-  <div *ngIf="!(loaderService.isLoading$ | async)">Erreur lors du chargement des données</div>
+  <div *ngIf="errorMessage">Erreur lors du chargement des données</div>
 </ng-template>
 
-<app-loader *ngIf="loaderService.isLoading$ | async"></app-loader>
-
-
-
-
+<app-loader *ngIf="loaderService.isLoading$"></app-loader>

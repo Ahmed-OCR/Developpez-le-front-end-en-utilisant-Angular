@@ -1,10 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { delay, Subscription } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { delay, Observable, of } from 'rxjs';
 import { OlympicService } from 'src/app/core/services/olympic.service';
 import { Olympic } from '../../core/models/Olympic';
 import { LegendPosition } from '@swimlane/ngx-charts';
 import { Router } from '@angular/router';
-import { tap } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { Participation } from '../../core/models/Participation';
 import { LoaderService } from '../../core/services/loader.service';
 
@@ -13,7 +13,7 @@ import { LoaderService } from '../../core/services/loader.service';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit {
   single: { name: string; value: number }[] = [];
   gradient: boolean = true;
   showLegend: boolean = false;
@@ -21,9 +21,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   isDoughnut: boolean = false;
   legendPosition: LegendPosition = LegendPosition.Below;
 
+  protected errorMessage: string | undefined = '';
   olympics: Olympic[] = [];
-
-  sub: Subscription = new Subscription();
+  olympics$: Observable<Olympic[]> = of([]);
 
   constructor(
     private olympicService: OlympicService,
@@ -32,19 +32,18 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.sub.add(
-      this.olympicService
-        .getOlympics()
-        .pipe(
-          tap(() => this.loaderService.showLoader()),
-          delay(1500), //Simulation durée chargement des données
-          tap((olympics: Olympic[]): void => {
-            this.olympics = olympics;
-            this.calculateTotalMedalsByCountry(olympics);
-          }),
-          tap(() => this.loaderService.hideLoader()),
-        )
-        .subscribe(),
+    this.olympics$ = this.olympicService.getOlympics().pipe(
+      tap(() => this.loaderService.showLoader()),
+      delay(1000), //Simulation durée chargement des données
+      tap((olympics: Olympic[]): void => {
+        this.olympics = olympics;
+        this.calculateTotalMedalsByCountry(olympics);
+      }),
+      tap(() => this.loaderService.hideLoader()),
+      catchError((error: string) => {
+        this.errorMessage = error;
+        return [];
+      }),
     );
   }
 
@@ -79,9 +78,5 @@ export class HomeComponent implements OnInit, OnDestroy {
   toolTipFormat(input: any): string {
     //&#129351; => Medal html code
     return `<p>${input.data.name}</p><p>&#129351;${input.data.value}</p>`;
-  }
-
-  ngOnDestroy(): void {
-    this.sub.unsubscribe();
   }
 }

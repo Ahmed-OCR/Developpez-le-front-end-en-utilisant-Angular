@@ -1,8 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Olympic } from '../../core/models/Olympic';
 import { Participation } from '../../core/models/Participation';
-import { delay, Subscription } from 'rxjs';
+import { delay, Observable, of } from 'rxjs';
 import { OlympicService } from '../../core/services/olympic.service';
 import { tap } from 'rxjs/operators';
 import { DetailSerie } from '../../core/models/DetailSerie';
@@ -13,7 +13,7 @@ import { LoaderService } from '../../core/services/loader.service';
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.scss'],
 })
-export class DetailsComponent implements OnInit, OnDestroy {
+export class DetailsComponent implements OnInit {
   multi: { name: string; series: DetailSerie[] }[] = [];
   // options
   legend: boolean = false;
@@ -29,7 +29,8 @@ export class DetailsComponent implements OnInit, OnDestroy {
   olympic!: Olympic;
   country: string = '';
 
-  sub: Subscription = new Subscription();
+  protected errorMessage: string | undefined = '';
+  olympics$: Observable<Olympic[]> = of([]);
 
   constructor(
     private olympicService: OlympicService,
@@ -40,24 +41,17 @@ export class DetailsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.country = this.route.snapshot.params['name'];
 
-    this.sub.add(
-      this.olympicService
-        .getOlympics()
-        .pipe(
-          tap(() => this.loaderService.showLoader()),
-          delay(1500), //Simulation durée chargement des données
-          tap((olympics: Olympic[]): void => {
-            this.olympic = this.olympicService.getOlympic(
-              olympics,
-              this.country,
-            );
-          }),
-          tap((): void => {
-            if (this.olympic && this.olympic.id > 0) this.setChartDatas();
-          }),
-          tap(() => this.loaderService.hideLoader()),
-        )
-        .subscribe(),
+    this.olympics$ = this.olympicService.getOlympics().pipe(
+      tap(() => this.loaderService.showLoader()),
+      delay(1000), //Simulation durée chargement des données
+      tap((olympics: Olympic[]): void => {
+        this.olympic = this.olympicService.getOlympic(olympics, this.country);
+      }),
+      tap((): void => {
+        if (this.olympic && this.olympic.id > 0) this.setChartDatas();
+        else this.errorMessage = 'Page introuvable';
+      }),
+      tap(() => this.loaderService.hideLoader()),
     );
   }
 
@@ -96,9 +90,5 @@ export class DetailsComponent implements OnInit, OnDestroy {
         }),
       ) || [];
     this.multi = [{ name: 'Medals', series }];
-  }
-
-  ngOnDestroy(): void {
-    this.sub.unsubscribe();
   }
 }
