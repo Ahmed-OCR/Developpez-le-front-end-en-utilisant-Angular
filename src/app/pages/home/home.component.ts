@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { catchError, tap } from 'rxjs/operators';
 import { Participation } from '../../core/models/Participation';
 import { LoaderService } from '../../core/services/loader.service';
+import { SingleSerie } from '../../core/models/SingleSerie';
 
 @Component({
   selector: 'app-home',
@@ -14,7 +15,7 @@ import { LoaderService } from '../../core/services/loader.service';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  single: { name: string; value: number }[] = [];
+  single: SingleSerie[] = [];
   gradient: boolean = true;
   showLegend: boolean = false;
   showLabels: boolean = true;
