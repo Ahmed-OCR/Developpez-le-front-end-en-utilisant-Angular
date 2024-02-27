@@ -1,6 +1,6 @@
-<ng-container *ngIf="olympics$ | async">
-  <ng-container *ngIf="olympic && olympic.id > 0; else loadingOrError">
-    <div class="title">{{ country }}</div>
+<ng-container *ngIf="olympic$ | async">
+  <ng-container *ngIf="olympic !== undefined">
+    <div class="title">{{ selectedCountry }}</div>
     <div class="wrapper">
       <div class="item">Number of entries<p>{{ getNbrJos() }}</p></div>
       <div class="item">Total number of medals<p>{{ getNbrMedals()}}</p></div>
@@ -18,15 +18,10 @@
       [results]="multi"
     >
     </ngx-charts-line-chart>
+    <div>
+      <button class="back"><a routerLink="/">Back</a></button>
+    </div>
   </ng-container>
 </ng-container>
-
-<ng-template #loadingOrError>
-  <div *ngIf="errorMessage">{{ errorMessage }}</div>
-</ng-template>
-
-<div>
-  <button class="back"><a routerLink="/">Back</a></button>
-</div>
 
 <app-loader *ngIf="loaderService.isLoading$"></app-loader>

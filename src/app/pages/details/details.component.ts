@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Olympic } from '../../core/models/Olympic';
 import { Participation } from '../../core/models/Participation';
-import { delay, Observable, of } from 'rxjs';
+import { delay, Observable } from 'rxjs';
 import { OlympicService } from '../../core/services/olympic.service';
 import { tap } from 'rxjs/operators';
 import { DetailSerie } from '../../core/models/DetailSerie';
@@ -26,37 +26,36 @@ export class DetailsComponent implements OnInit {
   yAxisLabel: string = 'Medals';
   timeline: boolean = true;
 
-  olympic!: Olympic;
-  country: string = '';
+  olympic!: Olympic | undefined;
+  selectedCountry: string = '';
 
-  protected errorMessage: string | undefined = '';
-  olympics$: Observable<Olympic[]> = of([]);
+  olympic$!: Observable<Olympic | undefined>;
 
   constructor(
     private olympicService: OlympicService,
-    private route: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
+    private route: Router,
     public loaderService: LoaderService,
   ) {}
 
   ngOnInit(): void {
-    this.country = this.route.snapshot.params['name'];
-
-    this.olympics$ = this.olympicService.getOlympics().pipe(
-      tap(() => this.loaderService.showLoader()),
-      delay(1000), //Simulation durée chargement des données
-      tap((olympics: Olympic[]): void => {
-        this.olympic = this.olympicService.getOlympic(olympics, this.country);
-      }),
-      tap((): void => {
-        if (this.olympic && this.olympic.id > 0) this.setChartDatas();
-        else this.errorMessage = 'Page introuvable';
-      }),
-      tap(() => this.loaderService.hideLoader()),
-    );
+    this.selectedCountry = this.activatedRoute.snapshot.params['name'];
+    this.olympic$ = this.olympicService
+      .getOlympicsByCountryName(this.selectedCountry)
+      .pipe(
+        tap(() => this.loaderService.showLoader()),
+        delay(1000), //Simulation durée chargement des données
+        tap((olympic: Olympic | undefined) => (this.olympic = olympic)),
+        tap((): void => {
+          if (this.olympic !== undefined) this.setChartDatas();
+          else this.route.navigateByUrl(`not-found`);
+        }),
+        tap(() => this.loaderService.hideLoader()),
+      );
   }
 
   getNbrMedals(): number {
-    let nbrMedals: number;
+    let nbrMedals: number | undefined;
     nbrMedals = this.olympic?.participations.reduce(
       (acc: number, participation: Participation) => {
         return acc + participation.medalsCount;
@@ -67,7 +66,7 @@ export class DetailsComponent implements OnInit {
   }
 
   getNbrathletes(): number {
-    let athleteCount: number;
+    let athleteCount: number | undefined;
     athleteCount = this.olympic?.participations.reduce(
       (acc: number, participation: Participation) => {
         return acc + participation.athleteCount;
