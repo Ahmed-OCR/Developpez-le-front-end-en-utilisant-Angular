@@ -48,7 +48,7 @@ export class HomeComponent implements OnInit {
     );
   }
 
-  onSelect(data: any): void {
+  onSelect(data: SingleSerie): void {
     this.route.navigateByUrl(`details/${data.name}`);
   }
 
@@ -76,7 +76,7 @@ export class HomeComponent implements OnInit {
     return yearsSet.size;
   }
 
-  toolTipFormat(input: any): string {
+  toolTipFormat(input: { data: SingleSerie }): string {
     //&#129351; => Medal html code
     return `<p>${input.data.name}</p><p>&#129351;${input.data.value}</p>`;
   }
